@@ -1,12 +1,11 @@
 import streamlit as st
 from dotenv import load_dotenv
-from llm import get_ai_message
+from llm import get_ai_response
 
-
-st.set_page_config(page_title="Tax Chatbot", page_icon="🤖")
+st.set_page_config(page_title="Korean Tax Chatbot", page_icon="🤖")
 
 st.title("🤖 Tax Chatbot")
-st.caption("I will answer your questions about taxes")
+st.caption("I will answer your questions about Korean taxes")
 
 load_dotenv()
 
@@ -27,7 +26,7 @@ if user_question := st.chat_input(placeholder="Ask me anything about taxes"):
     st.session_state.message_list.append({"role": "user", "content": user_question})
 
     with st.spinner("In progress..."):
-        ai_message = get_ai_message(user_question)
-        with st.chat_message("ai"):
-            st.write(ai_message)
-        st.session_state.message_list.append({"role": "ai", "content": ai_message})
+        ai_response = get_ai_response(user_question)
+        with st.chat_message("ai"): 
+            ai_message = st.write_stream(ai_response)
+            st.session_state.message_list.append({"role": "ai", "content": ai_message})
