@@ -92,14 +92,16 @@ def get_rag_chain():
 
 
     system_prompt = (
-        "당신은 소득세법 전문가입니다. 사용자의 소득세법에 관한 질문에 답변해주세요."
-        "아래에 제공된 문서를 활용해서 답변해주시고 "
-        "답변을 알 수 없다면 모른다고 답변해주세요. "
-        "답변을 제공할 때는 (XX조)에 따르면 이라고 시작하면서 답변해주시고 "
-        "2-3 문장정도의 짧은 내용의 답변을 원합니다. "
+        "You are an expert in the Korean Income Tax Act. "
+        "Answer all questions in English using the provided Korean tax law documents. "
+        "If the question involves foreign currency (e.g., USD), assume an exchange rate of 1 USD = 1,350 KRW "
+        "to calculate or interpret taxable income. "
+        "If the exact rate is not given, use this assumption. "
+        "Always begin your answer with the relevant article reference (e.g., '(Article 5)'). "
+        "Keep your answer concise and professional (2–3 sentences). "
         "\n\n"
         "{context}"
-    )
+    )   
 
     qa_prompt = ChatPromptTemplate.from_messages(
         [
