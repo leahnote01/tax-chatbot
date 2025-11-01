@@ -15,13 +15,16 @@ from config import answer_examples
 
 store = {}
 
+
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    """Retrieve or create chat history for a given session."""
     if session_id not in store:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
 
 def get_history_retriever():
+    """Create a retriever that reformulates follow-up questions using chat history."""
     llm = get_llm()
     retriever = get_retriever()
 
@@ -47,6 +50,7 @@ def get_history_retriever():
 
 
 def get_retriever():
+    """Return a retriever connected to Pinecone index for Korean tax law embeddings."""
     embedding = OpenAIEmbeddings(model='text-embedding-3-large')
     index_name = 'tax-markdown-index'
     database = PineconeVectorStore.from_existing_index(index_name=index_name, embedding=embedding)
@@ -55,11 +59,13 @@ def get_retriever():
 
 
 def get_llm(model='gpt-4o'):
+    """Initialize a ChatOpenAI model."""
     llm = ChatOpenAI(model=model)
     return llm
 
 
 def get_dictionary_chain():
+    """Apply simple dictionary-based normalization to user queries."""
     dictionary = ["사람을 나타내는 표현 -> 거주자"]
     llm = get_llm()
     prompt = ChatPromptTemplate.from_template(f"""
@@ -77,6 +83,7 @@ def get_dictionary_chain():
 
 
 def get_rag_chain():
+    """Build the main RAG (Retrieval-Augmented Generation) pipeline."""
     llm = get_llm()
     example_prompt = ChatPromptTemplate.from_messages(
         [
@@ -129,6 +136,7 @@ def get_rag_chain():
 
 
 def get_ai_response(user_message):
+    """Run the dictionary preprocessing + RAG chain and return a streaming response."""
     dictionary_chain = get_dictionary_chain()
     rag_chain = get_rag_chain()
     tax_chain = {"input": dictionary_chain} | rag_chain
